@@ -1,5 +1,5 @@
 {
-  "name": "hw2-mongodb",
+  "name": "nodejs-hw-mongodb",
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
