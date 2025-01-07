@@ -13,8 +13,8 @@ export const initMongoConnection = async () => {
     await mongoose.connect(`mongodb+srv://${user}:${pwd}@${url}/${db}`);
 
     console.log("Mongo connection successfully established!");
-  } catch (e) {
-    console.log("Error while setting up mongo connection", e);
-    throw e;
+  } catch (error) {
+    console.log(`Error while setting up mongo connection", ${error.message}`);
+    throw error;
   }
 };
