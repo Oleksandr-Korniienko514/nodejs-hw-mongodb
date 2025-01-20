@@ -1,8 +1,9 @@
-export const errorHandler = (error, req, res, next) => {
-    const { status = 500, message = "Server error" } = error;
-    res.status(status).json({
-        status,
-        message,
-        data: res.message,
+export default function errorHandler(err, req, res, next) {
+
+
+    res.status(err.status || 500).json({
+        status: err.status || 500,
+        message: 'Something went wrong',
+        data: err.message || 'Unexpected error',
     });
-};
+}
