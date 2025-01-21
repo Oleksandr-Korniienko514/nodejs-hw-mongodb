@@ -4,8 +4,10 @@ export default function ctrlWrapper(ctrl) {
             await ctrl(req, res, next);
         } catch (err) {
             if (err.isJoi) {
+                next(err);
                 return;
             }
+            next(err);
         }
     };
 }

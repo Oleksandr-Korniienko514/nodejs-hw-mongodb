@@ -1,15 +1,17 @@
 import express from 'express';
 import pino from 'pino-http';
 import cors from 'cors';
-import router from './routers/contacts.js';
+import router from './routers/index.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import errorHandler from './middlewares/errorHandler.js';
+import cookieParser from 'cookie-parser';
 
 export function setupServer() {
   const app = express();
 
-
   app.use(cors());
+
+  app.use(cookieParser());
 
   app.use(
     pino({
@@ -19,7 +21,7 @@ export function setupServer() {
     }),
   );
 
-  app.use('/contacts', router);
+  app.use('/', router);
 
   app.get('/', async (req, res) => {
     res.status(200).json({
