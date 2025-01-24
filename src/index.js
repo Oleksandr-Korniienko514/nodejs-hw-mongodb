@@ -10,7 +10,6 @@ const bootstrap = async () => {
   await initMongoConnection();
   await createDirIfNotExists(TEMP_UPLOAD_DIR);
   await createDirIfNotExists(UPLOAD_DIR);
-
   setupServer();
 };
 
