@@ -1,13 +1,13 @@
 {
   "name": "nodejs-hw-mongodb",
   "version": "1.0.0",
-  "main": "src/index.js",
+  "main": "index.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint src/**/*.js",
-    "dev": "nodemon -r dotenv/config src/index.js",
-    "start": "node -r dotenv/config src/index.js"
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "lint": "eslint src/**/*.js"
   },
   "keywords": [],
   "author": "Oleksandr Korniienko <bon.bon199993@gmail.com>",
