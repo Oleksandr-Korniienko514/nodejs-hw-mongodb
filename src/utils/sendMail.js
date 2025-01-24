@@ -1,9 +1,8 @@
 import nodemailer from 'nodemailer';
-
 import { SMTP } from '../contacts/index.js';
 import { env } from '../utils/env.js';
 
-const transporer = nodemailer.createTransport({
+const transporter = nodemailer.createTransport({
     host: env(SMTP.SMTP_HOST),
     port: Number(env(SMTP.SMTP_PORT)),
     auth: {
@@ -13,5 +12,5 @@ const transporer = nodemailer.createTransport({
 });
 
 export const sendEmail = async (options) => {
-    return await transporer.sendMail(options);
+    return await transporter.sendMail(options);
 };

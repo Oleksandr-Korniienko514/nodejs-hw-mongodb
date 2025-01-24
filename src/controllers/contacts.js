@@ -2,6 +2,10 @@ import * as contactsService from '../services/contacts.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
+import { env } from '../utils/env.js';
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import createHttpError from 'http-errors';
 
 export const getAllContactsController = async (req, res) => {
     const { page, perPage } = parsePaginationParams(req.query);
@@ -50,60 +54,75 @@ export const getContactByIdController = async (req, res, next) => {
         next(error);
     }
 };
-export const createContactController = async (req, res, next) => {
-    const newContact = await contactsService.createContact(req.body, req.user);
+export const createContactController = async (req, res) => {
+    const photo = req.file;
+    let photoUrl;
+
+    if (photo) {
+        if (env('ENABLE_CLOUDINARY') === 'true') {
+            photoUrl = await saveFileToCloudinary(photo);
+        } else {
+            photoUrl = await saveFileToUploadDir(photo);
+        }
+    }
+
+    const contact = await contactsService.createContact(
+        { ...req.body, photo: photoUrl },
+        req.user,
+    );
+
     res.status(201).json({
         status: 201,
         message: 'Successfully created a contact!',
-        data: newContact,
+        data: contact,
     });
 };
 export const updateContactController = async (req, res, next) => {
-    try {
-        const { contactId } = req.params;
-        const { name, phoneNumber, email, isFavourite, contactType } = req.body;
+    const { contactId } = req.params;
+    const photo = req.file;
 
-        const updatedContact = await contactsService.updateContact(
-            contactId,
-            { name, phoneNumber, email, isFavourite, contactType },
-            req.user._id,
-        );
+    let photoUrl;
 
-        if (!updatedContact) {
-            return res.status(404).json({
-                status: 404,
-                message: 'Contact not found',
-                data: null,
-            });
+    if (photo) {
+        if (env('ENABLE_CLOUDINARY') === 'true') {
+            photoUrl = await saveFileToCloudinary(photo);
+        } else {
+            photoUrl = await saveFileToUploadDir(photo);
         }
-
-        res.status(200).json({
-            status: 200,
-            message: 'Successfully patched a contact!',
-            data: updatedContact,
-        });
-    } catch (error) {
-        next(error);
     }
+
+    const result = await contactsService.updateContact(
+        contactId,
+        {
+            ...req.body,
+            photo: photoUrl,
+        },
+        req.user._id,
+    );
+
+    if (!result) {
+        next(createHttpError(404, 'Contact not found'));
+        return;
+    }
+
+    res.json({
+        status: 200,
+        message: 'Successfully patched a contact!',
+        data: result.contact,
+    });
 };
+
 export const deleteContactController = async (req, res, next) => {
-    try {
-        const { contactId } = req.params;
-        const deleteContact = await contactsService.deleteContact(
-            contactId,
-            req.user._id,
-        );
-        if (!deleteContact) {
-            return res.status(404).json({
-                status: 404,
-                message: 'Contact not found',
-                data: null,
-            });
-        }
-
-
-        res.status(204).end();
-    } catch (error) {
-        next(error);
+    const { contactId } = req.params;
+    const deleteContact = await contactsService.deleteContact(
+        contactId,
+        req.user._id,
+    );
+    if (!deleteContact) {
+        next(createHttpError(404, 'Contact not found'));
+        return;
     }
+
+
+    res.status(204).end();
 };
