@@ -1,0 +1,32 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: Contacts Node.js
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: Contacts app
+tags:
+  - name: Contacts
+    description: Operations with contacts
+servers:
+  - url: http://localhost:3000
+  - url: https://nodejs-hw-mongodb-rghb.onrender.com
+paths:
+  /contacts:
+    get:
+      $ref: ../swagger/paths/contacts/get.yaml
+    post:
+      $ref: ../swagger/paths/contacts/post.yaml
+  /contacts/{Id}:
+    get:
+      $ref: ../swagger/paths/contacts/{Id}/get.yaml
+    patch:
+      $ref: ../swagger/paths/contacts/{Id}/patch.yaml
+    delete:
+      $ref: ../swagger/paths/contacts/{Id}/delete.yaml
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
