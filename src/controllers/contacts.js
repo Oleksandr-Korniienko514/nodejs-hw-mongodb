@@ -34,14 +34,12 @@ export const getContactByIdController = async (req, res, next) => {
             req.user._id,
         );
         if (!contact) {
-            return res.status(400).json({
-                status: 400,
-                message: 'Contact not found',
+            return res.status(404).json({
+                status: 404,
                 data: {
-                    message: 'Id is not valid',
+                    message: 'Contact not found',
                 },
             });
-
 
         }
         res.status(200).json({
@@ -50,7 +48,6 @@ export const getContactByIdController = async (req, res, next) => {
             data: contact,
         });
     } catch (error) {
-
         next(error);
     }
 };
@@ -108,7 +105,7 @@ export const updateContactController = async (req, res, next) => {
     res.json({
         status: 200,
         message: 'Successfully patched a contact!',
-        data: result.contact,
+        data: result,
     });
 };
 
@@ -122,7 +119,5 @@ export const deleteContactController = async (req, res, next) => {
         next(createHttpError(404, 'Contact not found'));
         return;
     }
-
-
     res.status(204).end();
 };

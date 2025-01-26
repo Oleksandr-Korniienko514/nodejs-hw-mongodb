@@ -31,6 +31,7 @@ export const getAllContacts = async ({
             .exec(),
     ]);
 
+
     const paginationData = calculatePaginationData(contactCount, perPage, page);
     return {
         data: contacts,
@@ -55,7 +56,7 @@ export const updateContact = async (
     userId,
     options = {},
 ) => {
-    const rawResult = await Contact.findOneAndUpdate(
+    const updatedContact = await Contact.findOneAndUpdate(
         {
             _id: contactId,
             userId,
@@ -63,17 +64,11 @@ export const updateContact = async (
         contact,
         {
             new: true,
-            includeResultMetadata: true,
             ...options,
         },
     );
 
-    if (!rawResult || !rawResult.value) return null;
-
-    return {
-        contact: rawResult.value,
-        isNew: Boolean(rawResult?.lastErrorObject?.upserted),
-    };
+    return updatedContact || null;
 };
 export const deleteContact = async (contactId, userId) => {
     return await Contact.findOneAndDelete({ _id: contactId, userId });
