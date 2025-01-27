@@ -55,10 +55,7 @@ export const loginUser = async (payload) => {
 };
 
 
-export const logoutUser = async (sessionId) => {
 
-    await Session.deleteOne({ _id: sessionId });
-};
 
 const createSession = () => {
     const accessToken = randomBytes(30).toString('base64');
