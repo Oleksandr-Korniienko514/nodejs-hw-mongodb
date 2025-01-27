@@ -26,6 +26,7 @@ export const getAllContactsController = async (req, res) => {
         data: contacts,
     });
 };
+
 export const getContactByIdController = async (req, res, next) => {
     const { contactId } = req.params;
     try {
@@ -40,7 +41,6 @@ export const getContactByIdController = async (req, res, next) => {
                     message: 'Contact not found',
                 },
             });
-
         }
         res.status(200).json({
             status: 200,
@@ -51,6 +51,7 @@ export const getContactByIdController = async (req, res, next) => {
         next(error);
     }
 };
+
 export const createContactController = async (req, res) => {
     const photo = req.file;
     let photoUrl;
@@ -74,6 +75,7 @@ export const createContactController = async (req, res) => {
         data: contact,
     });
 };
+
 export const updateContactController = async (req, res, next) => {
     const { contactId } = req.params;
     const photo = req.file;
