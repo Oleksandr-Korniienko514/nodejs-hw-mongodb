@@ -15,6 +15,7 @@ import { sendEmail } from '../utils/sendMail.js';
 import handlebars from 'handlebars';
 import path from 'node:path';
 import fs from 'node:fs/promises';
+
 import {
     getFullNameFromGoogleTokenPayload,
     validateCode,
@@ -54,9 +55,11 @@ export const loginUser = async (payload) => {
     });
 };
 
+
 export const logoutUser = async (sessionId) => {
-    await User.deleteOne({ _id: sessionId });
+    await Session.deleteOne({ _id: sessionId });
 };
+
 
 const createSession = () => {
     const accessToken = randomBytes(30).toString('base64');
@@ -76,7 +79,7 @@ export const refreshUsersSession = async ({ sessionId, refreshToken }) => {
         refreshToken,
     });
 
-    if (!Session) {
+    if (!session) {
         throw createHttpError(401, 'Session token expired');
     }
 
@@ -128,6 +131,7 @@ export const requestResetToken = async (email) => {
         name: user.name,
         link: `${env('APP_DOMAIN')}/reset-password?token=${resetToken}`,
     });
+
     await sendEmail({
         from: env(SMTP.SMTP_FROM),
         to: email,
@@ -160,9 +164,8 @@ export const resetPassword = async (payload) => {
     const encryptedPassword = await bcrypt.hash(payload.password, 10);
 
     await User.updateOne({ _id: user._id }, { password: encryptedPassword });
-
-
 };
+
 
 export const loginOrSignupWithGoogle = async (code) => {
     const loginTicket = await validateCode(code);
