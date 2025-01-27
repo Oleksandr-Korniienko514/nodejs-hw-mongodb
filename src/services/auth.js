@@ -51,7 +51,7 @@ export const loginUser = async (payload) => {
 };
 
 export const logoutUser = async (sessionId) => {
-    await User.deleteOne({ _id: sessionId });
+    await Session.deleteOne({ _id: sessionId });
 };
 
 const createSession = () => {
@@ -72,7 +72,7 @@ export const refreshUsersSession = async ({ sessionId, refreshToken }) => {
         refreshToken,
     });
 
-    if (!Session) {
+    if (!session) {
         throw createHttpError(401, 'Session token expired');
     }
 
@@ -98,6 +98,7 @@ export const requestResetToken = async (email) => {
     if (!user) {
         throw createHttpError(404, 'User not found');
     }
+
     const resetToken = jwt.sign(
         {
             sub: user._id,
@@ -123,6 +124,7 @@ export const requestResetToken = async (email) => {
         name: user.name,
         link: `${env('APP_DOMAIN')}/reset-password?token=${resetToken}`,
     });
+
     await sendEmail({
         from: env(SMTP.SMTP_FROM),
         to: email,
